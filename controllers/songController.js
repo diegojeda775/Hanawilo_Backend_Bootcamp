@@ -19,8 +19,36 @@ const deleteSongs = (req, res, next) => {
     });
 };
 
+const getSong = (req, res, next) => {
+  res
+    .status(200)
+    .setHeader("Content-Type", "application/json")
+    .json({
+      message: `Success: Show me song with song ID of ${req.params.songId}!`,
+    });
+};
+const updateSong = (req, res, next) => {
+  res
+    .status(200)
+    .setHeader("Content-Type", "application/json")
+    .json({
+      message: `Success: Updated song with song ID of ${req.params.songId}!`,
+    });
+};
+const deleteSong = (req, res, next) => {
+  res
+    .status(200)
+    .setHeader("Content-Type", "application/json")
+    .json({
+      message: `Success: Deleted song with song ID of ${req.params.songId}!`,
+    });
+};
+
 module.exports = {
   getSongs,
   postSong,
   deleteSongs,
+  getSong,
+  updateSong,
+  deleteSong,
 };

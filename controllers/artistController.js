@@ -19,8 +19,36 @@ const deleteArtists = (req, res, next) => {
     });
 };
 
+const getArtist = (req, res, next) => {
+  res
+    .status(200)
+    .setHeader("Content-Type", "application/json")
+    .json({
+      message: `Success: Show me artist with artist ID of ${req.params.artistId}!`,
+    });
+};
+const updateArtist = (req, res, next) => {
+  res
+    .status(200)
+    .setHeader("Content-Type", "application/json")
+    .json({
+      message: `Success: Updated artist with artist ID of ${req.params.artistId}!`,
+    });
+};
+const deleteArtist = (req, res, next) => {
+  res
+    .status(200)
+    .setHeader("Content-Type", "application/json")
+    .json({
+      message: `Success: Deleted artist with artist ID of ${req.params.artistId}!`,
+    });
+};
+
 module.exports = {
   getArtists,
   postArtist,
   deleteArtists,
+  getArtist,
+  updateArtist,
+  deleteArtist,
 };

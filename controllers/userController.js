@@ -19,8 +19,36 @@ const deleteUsers = (req, res, next) => {
     });
 };
 
+const getUser = (req, res, next) => {
+  res
+    .status(200)
+    .setHeader("Content-Type", "application/json")
+    .json({
+      message: `Success: Show me user with user ID of ${req.params.userId}!`,
+    });
+};
+const updateUser = (req, res, next) => {
+  res
+    .status(200)
+    .setHeader("Content-Type", "application/json")
+    .json({
+      message: `Success: Updated user with user ID of ${req.params.userId}!`,
+    });
+};
+const deleteUser = (req, res, next) => {
+  res
+    .status(200)
+    .setHeader("Content-Type", "application/json")
+    .json({
+      message: `Success: Deleted user with user ID of ${req.params.userId}!`,
+    });
+};
+
 module.exports = {
   getUsers,
   postUser,
   deleteUsers,
+  getUser,
+  updateUser,
+  deleteUser,
 };
