@@ -1,21 +1,24 @@
 const Artist = require("../models/Artist");
 
 const getArtists = async (req, res, next) => {
+  const filter = {};
+  const options = {};
   if (Object.keys(req.query).length) {
-    const { firstName, lastName, genre } = req.query;
-    const filter = [];
+    const { firstName, lastName, genre, limit, sortByGenre } = req.query;
 
-    if (firstName) filter.push(firstName);
-    if (lastName) filter.push(lastName);
-    if (genre) filter.push(genre);
+    if (firstName) filter.firstName = firstName;
+    if (lastName) filter.lastName = lastName;
+    if (genre) filter.genre = genre;
 
-    for (query of filter) {
-      console.log(`Searching artist by: ${query}`);
-    }
+    if (limit) options.limit = limit;
+    if (sortByGenre)
+      options.sort = {
+        genre: sortByGenre === "asc" ? 1 : -1,
+      };
   }
 
   try {
-    const artists = await Artist.find();
+    const artists = await Artist.find({}, filter, options);
 
     res.status(200).setHeader("Content-Type", "application/json").json(artists);
   } catch (err) {

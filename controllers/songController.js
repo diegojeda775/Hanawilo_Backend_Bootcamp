@@ -1,21 +1,25 @@
 const Song = require("../models/Song.js");
 
 const getSongs = async (req, res, next) => {
+  const filter = {};
+  const options = {};
+
   if (Object.keys(req.query).length) {
-    const { songTitle, artist, genre } = req.query;
-    const filter = [];
+    const { songTitle, artist, genre, limit, sortByArtist } = req.query;
 
-    if (songTitle) filter.push(songTitle);
-    if (artist) filter.push(artist);
-    if (genre) filter.push(genre);
+    if (songTitle) filter.songTitle = songTitle;
+    if (artist) filter.artist = artist;
+    if (genre) filter.genre = genre;
 
-    for (query of filter) {
-      console.log(`Searching song by ${query}`);
-    }
+    if (limit) options.limit = limit;
+    if (sortByArtist)
+      options.sort = {
+        artist: sortByArtist === "asc" ? 1 : -1,
+      };
   }
 
   try {
-    const songs = await Song.find();
+    const songs = await Song.find({}, filter, options);
 
     res.status(200).setHeader("Content-Type", "application/json").json(songs);
   } catch (err) {
@@ -78,6 +82,48 @@ const deleteSong = async (req, res, next) => {
   }
 };
 
+const getSongRatings = async (res, req, next) => {
+  try {
+    const song = await Song.findById(req.params.songId);
+
+    res
+      .status(200)
+      .setHeader("Content-Type", "application/json")
+      .json(song.ratings);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const createSongRating = async (req, res, next) => {
+  try {
+    const song = await Song.findById(req.params.songId);
+    song.ratings.push(req.body);
+    await song.save();
+
+    res.status(201).setHeader("Content-Type", "application/json").json(song);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const deleteSongRatings = async (req, res, next) => {
+  try {
+    const song = await Song.findById(req.params.songId);
+    song.ratings = [];
+    await song.save();
+
+    res
+      .status(200)
+      .setHeader("Content-Type", "application/json")
+      .json({
+        message: `Ratings deleted for song with id: ${req.params.songId}`,
+      });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getSongs,
   postSong,
@@ -85,4 +131,7 @@ module.exports = {
   getSong,
   updateSong,
   deleteSong,
+  getSongRatings,
+  createSongRating,
+  deleteSongRatings,
 };
