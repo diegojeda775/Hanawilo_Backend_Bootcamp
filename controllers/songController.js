@@ -101,7 +101,10 @@ const createSongRating = async (req, res, next) => {
     song.ratings.push(req.body);
     await song.save();
 
-    res.status(201).setHeader("Content-Type", "application/json").json(song);
+    res
+      .status(201)
+      .setHeader("Content-Type", "application/json")
+      .json(song.ratings);
   } catch (err) {
     next(err);
   }
@@ -124,6 +127,69 @@ const deleteSongRatings = async (req, res, next) => {
   }
 };
 
+// for /:songId/ratings/:ratingId
+const getSongRating = async (req, res, next) => {
+  try {
+    const song = await Song.findById(req.params.songId);
+    let rating = song.ratings.find((rating) =>
+      req.params.ratingId.equals(rating._id)
+    );
+
+    if (!rating)
+      rating = { message: `No rating found with id: ${req.params.songId}` };
+
+    res.status(200).setHeader("Content-Type", "application/json").json(rating);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const updateSongRating = async (req, res, next) => {
+  try {
+    const song = await Song.findById(req.params.songId);
+    let rating = song.ratings.find((rating) =>
+      req.params.ratingId.equals(rating._id)
+    );
+
+    if (rating) {
+      const ratingIndexPosition = song.ratings.indexOf(rating);
+      song.ratings.splice(ratingIndexPosition, 1, req.body);
+      rating = req.body;
+      await song.save();
+    } else {
+      rating = { message: `No rating found with id: ${req.params.ratingId}` };
+    }
+
+    res.status(200).setHeader("Content-Type", "application/json").json(rating);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const deleteSongRating = async (req, res, next) => {
+  try {
+    const song = await Song.findById(req.params.songId);
+    let rating = song.ratings.find((rating) =>
+      req.params.ratingId.equals(rating._id)
+    );
+
+    if (rating) {
+      const ratingIndexPosition = song.ratings.indexOf(rating);
+      song.splice(ratingIndexPosition, 1);
+      await song.save();
+      rating = {
+        message: `Successfully deleted rating with id: ${req.params.ratingId}`,
+      };
+    } else {
+      rating = { message: `No rating found with id: ${req.params.ratingId}` };
+    }
+
+    res.status(200).setHeader("Content-Type", "application/json").json(rating);
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   getSongs,
   postSong,
@@ -134,4 +200,7 @@ module.exports = {
   getSongRatings,
   createSongRating,
   deleteSongRatings,
+  getSongRating,
+  updateSongRating,
+  deleteSongRating,
 };

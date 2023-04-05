@@ -9,6 +9,9 @@ const {
   getSongRatings,
   createSongRating,
   deleteSongRatings,
+  getSongRating,
+  updateSongRating,
+  deleteSongRating,
 } = require("../controllers/songController");
 
 const router = express.Router();
@@ -22,5 +25,11 @@ router
   .get(getSongRatings)
   .post(createSongRating)
   .delete(deleteSongRatings);
+
+router
+  .route("/:songId/ratings/:ratingId")
+  .get(getSongRating)
+  .put(updateSongRating)
+  .delete(deleteSongRating);
 
 module.exports = router;
