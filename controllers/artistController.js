@@ -95,24 +95,34 @@ const deleteArtist = async (req, res, next) => {
 
 const postArtistImage = async (req, res, next) => {
   try {
-    const err = { message: `Missing Image` };
+    const err = {};
 
-    if (!req.files) next(err);
+    if (!req.files) {
+      err.message = "Missing Image";
+      next(err);
+    }
 
     const file = req.files.file;
 
-    if (!file.mimetype.startsWith("image"))
-      next((err.message = "Please upload image file type"));
-    if (file.size > process.env.MAZ_FILE_SIZE)
-      next(
-        (err.message = `Image exceeds size of ${process.env.MAZ_FILE_SIZE}`)
-      );
+    if (!file.mimetype.startsWith("image")) {
+      err.message = "Please upload image file type";
+      next(err);
+    }
+    if (file.size > process.env.MAZ_FILE_SIZE) {
+      err.message = `Image exceeds size of ${process.env.MAZ_FILE_SIZE}`;
+      next(err);
+    }
 
     file.name = `photo_${req.params.artistId}${path.parse(file.name).ext}`;
 
     const filePath = process.env.FILE_UPLOAD_PATH + file.name;
 
     file.mv(filePath, async (err) => {
+      // if (err) {
+      //   err.message = "Problem uploading photo";
+      //   next(err);
+      // }
+
       await Artist.findByIdAndUpdate(req.params.artistId, { image: file.name });
 
       res

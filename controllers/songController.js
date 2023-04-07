@@ -82,7 +82,7 @@ const deleteSong = async (req, res, next) => {
   }
 };
 
-const getSongRatings = async (res, req, next) => {
+const getSongRatings = async (req, res, next) => {
   try {
     const song = await Song.findById(req.params.songId);
 
@@ -131,12 +131,10 @@ const deleteSongRatings = async (req, res, next) => {
 const getSongRating = async (req, res, next) => {
   try {
     const song = await Song.findById(req.params.songId);
-    let rating = song.ratings.find((rating) =>
-      req.params.ratingId.equals(rating._id)
-    );
+    let rating = song.ratings.find((r) => r._id.equals(req.params.ratingId));
 
     if (!rating)
-      rating = { message: `No rating found with id: ${req.params.songId}` };
+      rating = { message: `No rating found with id: ${req.params.ratingId}` };
 
     res.status(200).setHeader("Content-Type", "application/json").json(rating);
   } catch (err) {
@@ -148,7 +146,7 @@ const updateSongRating = async (req, res, next) => {
   try {
     const song = await Song.findById(req.params.songId);
     let rating = song.ratings.find((rating) =>
-      req.params.ratingId.equals(rating._id)
+      rating._id.equals(req.params.ratingId)
     );
 
     if (rating) {
@@ -170,12 +168,12 @@ const deleteSongRating = async (req, res, next) => {
   try {
     const song = await Song.findById(req.params.songId);
     let rating = song.ratings.find((rating) =>
-      req.params.ratingId.equals(rating._id)
+      rating._id.equals(req.params.ratingId)
     );
 
     if (rating) {
       const ratingIndexPosition = song.ratings.indexOf(rating);
-      song.splice(ratingIndexPosition, 1);
+      song.ratings.splice(ratingIndexPosition, 1);
       await song.save();
       rating = {
         message: `Successfully deleted rating with id: ${req.params.ratingId}`,
