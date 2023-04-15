@@ -104,6 +104,7 @@ const postArtistImage = async (req, res, next) => {
 
     const file = req.files.file;
 
+    console.log(!file.mimetype.startsWith("image"));
     if (!file.mimetype.startsWith("image")) {
       err.message = "Please upload image file type";
       next(err);

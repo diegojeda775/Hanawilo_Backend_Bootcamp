@@ -13,12 +13,21 @@ const {
   updateSongRating,
   deleteSongRating,
 } = require("../controllers/songController");
+const protectedRoute = require("../middlewares/auth");
 
 const router = express.Router();
 
-router.route("/").get(getSongs).post(postSong).delete(deleteSongs);
+router
+  .route("/")
+  .get(getSongs)
+  .post(protectedRoute, postSong)
+  .delete(protectedRoute, deleteSongs);
 
-router.route("/:songId").get(getSong).put(updateSong).delete(deleteSong);
+router
+  .route("/:songId")
+  .get(getSong)
+  .put(protectedRoute, updateSong)
+  .delete(protectedRoute, deleteSong);
 
 router
   .route("/:songId/ratings")

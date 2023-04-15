@@ -80,6 +80,21 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
+const login = async (req, res, next) => {
+  const { email, password } = req.body;
+  if (!email || !password) throw new Error("Please provide email nad password");
+
+  const user = await User.findOne({ email }).select("+password");
+
+  if (!user) throw new Error("Invalid Credentials");
+
+  const isMatch = await user.matchPassword(password);
+
+  if (!isMatch) throw new Error("Invalid Credentials");
+
+  sendTokenResponse(user, 200, res);
+};
+
 const sendTokenResponse = (user, statusCode, res) => {
   const token = user.getSignedJwtToken();
   const options = {
@@ -102,4 +117,5 @@ module.exports = {
   getUser,
   updateUser,
   deleteUser,
+  login,
 };
